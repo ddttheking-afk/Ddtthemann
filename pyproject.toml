@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "teachai"
+version = "0.1.0"
+description = "A single AI brain you teach by example to select pictures and play games (including emulators)."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "ddttheking" }]
+dependencies = [
+    "numpy>=1.23",
+    "Pillow>=9.0",
+]
+
+[project.optional-dependencies]
+emulator = ["mss>=9.0", "pynput>=1.7"]
+dev = ["pytest>=7.0"]
+
+[project.scripts]
+teachai = "teachai.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["teachai*"]

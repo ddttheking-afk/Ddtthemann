@@ -1,0 +1,8 @@
+# Core (required) -- the brain and demo game run on these alone.
+numpy>=1.23
+
+# Vision: reading image files.
+Pillow>=9.0
+
+# Optional, only for driving a REAL emulator (Pokemon, Epic Seven, ...).
+# Install with:  pip install -r requirements-emulator.txt
