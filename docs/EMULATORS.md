@@ -84,28 +84,23 @@ The more varied your demonstrations, the better it generalises.
 ## 3b. Teach it by reward (reinforcement)
 
 Use this when the agent can play unattended and you can *score* the screen —
-e.g. detect a "Victory" banner in Epic Seven, or HP/level in Pokémon. You supply
-two callbacks that read the captured frame:
+e.g. detect a "Victory" banner in Epic Seven, or a win screen in Pokémon. The
+easiest reliable signal is: **save a screenshot of the winning moment**, and let
+`TemplateReward` recognise it for you — no pixel math to write:
 
 ```python
-import numpy as np
 from teachai.games.emulator import EmulatorEnv
-from teachai.games import QLearningAgent
+from teachai.games import QLearningAgent, TemplateReward
 
-def reward_fn(frame: np.ndarray) -> float:
-    # Example: reward bright-gold "Victory" pixels appearing.
-    gold = ((frame[:, :, 0] > 200) & (frame[:, :, 1] > 170) &
-            (frame[:, :, 2] < 100)).mean()
-    return 1.0 if gold > 0.05 else 0.0
-
-def done_fn(frame: np.ndarray) -> bool:
-    return reward_fn(frame) > 0.0      # episode ends when we detect a win
+# 1. Screenshot the "Victory" banner once and crop it to victory.png.
+# 2. Turn that screenshot into a reward + episode-end detector.
+win = TemplateReward("victory.png", threshold=0.7)
 
 env = EmulatorEnv(
     region=(60, 120, 480, 320),
     keymap=["x", "z", None],           # attack, confirm, wait
-    reward_fn=reward_fn,
-    done_fn=done_fn,
+    reward_fn=win,                     # +1 when the banner appears
+    done_fn=win.detected,              # episode ends on the win screen
     step_delay=0.3,
 )
 
@@ -114,9 +109,16 @@ agent.train(env, episodes=500)         # this plays the real game live
 agent.save("e7_agent.json")
 ```
 
-Designing a good `reward_fn` is most of the work — start simple (detect the win
-screen) and refine. Template matching against a saved screenshot of the banner
-works well if colour thresholds are too noisy.
+`TemplateReward` compares a small, brightness-tolerant grayscale version of the
+screen against your saved image, so it survives minor animation flicker. Tips:
+
+- **Crop tightly** to just the banner and pass `region=(left, top, w, h)` (the
+  area of the frame where it appears) — narrower is far more reliable.
+- **Tune `threshold`** (0..1): raise it if it triggers too easily, lower it if it
+  misses. Use `win.score(frame)` to see the raw similarity while calibrating.
+
+If you'd rather hand-roll the signal, any `frame -> float` function works as
+`reward_fn` and any `frame -> bool` as `done_fn`.
 
 ---
 

@@ -144,6 +144,7 @@ teachai/
     demo_game.py  CatcherGame     -- built-in game to watch it learn
     agent.py      ImitationAgent + QLearningAgent
     emulator.py   EmulatorEnv     -- drive real emulators via screen + keys
+    matchers.py   TemplateReward  -- turn a win-screen screenshot into a reward
   cli.py          the `teachai` command
 ```
 
