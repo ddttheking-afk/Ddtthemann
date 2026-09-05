@@ -1,0 +1,5 @@
+# Extra dependencies for the real-emulator adapter (teachai.games.emulator).
+# These capture the screen and send key presses, so they are platform-specific
+# and kept separate from the core install.
+mss>=9.0        # fast screen capture
+pynput>=1.7     # keyboard control / recording your play

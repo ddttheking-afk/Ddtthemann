@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+.venv/
+venv/
+env/
+
+# Trained brains / agents (regenerate them with the CLI)
+*.npz
+*.json
+!examples/*.json
+.DS_Store
